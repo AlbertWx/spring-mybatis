@@ -11,12 +11,16 @@
 		<package name="com.wx.entity"/>
 	</typeAliases>
 	
-	<mappers>
+	
+	<!-- 由于spring在初始化的时候，创建sqlSessionFactoryBean实例对象时，
+	配置了<property name="mapperLocations" value="classpath:com/wx/mapper/*.xml"/>属性，
+	所以sqlMapConfig,xml中可以省略 mappers标签的配置 -->
+	<!-- <mappers> -->
 		<!-- 原始dao开发方式，从resource标签导入 -->
 		<!-- <mapper resource="mapper/UserMapper.xml"/> -->
 		
 		<!-- mapper接口动态代理方式，接口和同名的xml文件在同一个目录，用package标签 -->
-		<package name="com.wx.mapper"/>
-	</mappers>
+	<!-- 	<package name="com.wx.mapper"/>
+	</mappers> -->
 	
 </configuration>
