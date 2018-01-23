@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+	<!-- 引入数据库连接的配置文件 方式一 -->
+	<!-- <context:property-placeholder location="classpath:db.properties"/> -->
+
+	<!-- 引入数据库连接的配置文件 方式二 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<!-- 读取单个配置文件 -->
+		<property name="location" value="classpath:db.properties" />
+		<!-- 读取多个配置文件 -->
+		<!-- <property name="locations">
+			<list>
+				<value>classpath:db.properties</value>
+			</list>
+		</property> -->
+	</bean>
+
+	<!-- 配置数据库连接池 dbcp2 -->
+	<bean id="dataSource2" class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!-- dbcp数据库连接池 -->
+	<bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxActive" value="10" />
+		<property name="maxIdle" value="5" />
+	</bean>
+
+	<!-- mybatis工厂配置 -->
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource2" />
+		<!-- mybatis 核心配置文件的位置 -->
+		<property name="configLocation" value="classpath:sqlMapConfig.xml" />
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<!-- 该处只支持构造器注入 -->
+		<constructor-arg index="0" ref="sqlSessionFactoryBean" />
+	</bean>
+	
+	<!-- 原始dao开发方式 -->
+	<bean id="userDao" class="com.wx.dao.impl.UserDaoImpl">
+		<property name="sqlSessionTemplate" ref="sqlSession"></property>
+	</bean>
+	
+	<!-- mapper动态代理开发 基本方式 -->
+	<bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactoryBean"/>
+		<property name="mapperInterface" value="com.wx.mapper.UserMapper" />
+	</bean>
+	
+	<!-- mapper动态代理开发，增强版 包扫描方式 -->
+	<!-- 该扫描实现bean不需要有id,因为扫描的包内会生成大量的mapper接口实例，因此spring取值的时候应该
+	通过context.getBean(XXXMapper.class)的方式取 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 实例化的时候会自动找到上面生成的 sqlSessionFactory ，不需要显式的注入sqlSessionFactory-->
+		<!-- <property name="sqlSessionFactory" ref="sqlSessionFactoryBean"/> -->
+		<!-- 扫描的基本包，会扫描基本包及其子包下的mapper接口 -->
+		<property name="basePackage" value="com.wx.mapper" />
+	</bean>
+	
+</beans>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- <mapper namespace="User">  此namespace定义方式为普通方式，非适应mybatis动态代理方式-->
+<mapper namespace="User">
+		<!-- namespace="com.wx.mybatis.mapper.UserMapper"该命名空间是绑定mybatis的接口动态代理方式，指定对应的接口 -->
+
+	<!-- #{} 标识占位符 可以防止sql注入 ${} 用作字符串拼接 此时只能用vaule标识 ${value}固定写法 可能导致sql注入 -->
+
+	<select id="selectById" parameterType="int"
+		resultType="User">
+		select * from user where id=#{id}
+	</select>
+	<select id="selectAll" resultType="com.wx.entity.User">
+		select * from user
+	</select>
+<!-- <select id="selectListMap" resultType="java.util.HashMap">
+		select username , address
+		from user where id in (10,16)
+	</select>
+	<select id="selectMap" resultType="java.util.HashMap">
+		select username , address from
+		user where id in (10)
+	</select>
+	<select id="selectLike" parameterType="String"
+		resultType="com.wx.mybatis.entity.User">
+		select * from user where username like '%${value}%'
+		select * from user where username like "%"#{v}"%"
+		可在需要被模糊匹配的字符串两边加上 "%" 即可实现转义
+	</select>
+
+	<select id="selectLikeByMap" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from user where username like "%"#{username}"%"
+	</select>
+
+	<select id="selectByMap" parameterType="java.util.HashMap"
+		resultType="com.wx.mybatis.entity.User">
+		select * from user where username=#{username} and
+		address=#{address}
+	</select>
+	<select id="selectAsMapByObject" parameterType="com.wx.mybatis.entity.User"
+		resultType="java.util.HashMap">
+		select * from user where username= #{username} and address
+		=#{address}
+	</select>
+	<select id="selectByList" parameterType="java.util.ArrayList"
+		resultType="java.util.HashMap">
+		select * from user where id in
+		<foreach collection="list" index="index" item="item" open="("
+			close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+	<select id="selectByListInMap" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from user where address = #{address}
+		<if test="ids != null">
+			and id in
+			<foreach collection="ids" index="index" item="item" open="("
+				close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	<select id="selectAsMapByMap" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from user where username= #{username} and address
+		=#{address}
+	</select>
+	<select id="selectByArrayAsObject" parameterType="java.util.ArrayList"
+		resultType="com.wx.mybatis.entity.User">
+		select * from user where id in
+		<foreach collection="array" item="item" index="index" open="("
+			close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+	<select id="selectByArrayAsMap" parameterType="java.util.ArrayList"
+		resultType="java.util.HashMap">
+		select * from user where id in
+		<foreach collection="array" item="item" index="index" open="("
+			close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+
+	<insert id="insertByHashMap" parameterType="java.util.HashMap">
+		insert into user
+		(username ,address ,birthday ,sex ) values (#{username} ,#{address}
+		,#{birthday} ,#{sex})
+	</insert>
+	<insert id="insertUser" parameterType="com.wx.mybatis.entity.User">
+		insert into user (username
+		,address ) values (#{username} ,#{address} )
+	</insert>
+	<insert id="insertByMap" parameterType="java.util.Map">
+		insert into user
+		<foreach collection="params.keys" item="key" open="(" close=")"
+			separator=",">
+			${key}
+		</foreach>
+		values
+		<foreach collection="params.keys" item="key" open="(" close=")"
+			separator=",">
+			#{params[${key}]}
+		</foreach>
+	</insert>
+
+	<update id="updateByMap" parameterType="java.util.HashMap">
+		update user set
+		address=#{address} where username=#{username}
+	</update>
+	<update id="updateByMapAndList" parameterType="java.util.HashMap">
+		update user set address=#{address} where 1=1
+		<if test="username != null">
+			and username=#{username}
+		</if>
+		<if test="ids != null">
+			and id in
+			<foreach collection="ids" item="item" index="index" open="("
+				close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from user where id
+		= #{id}
+	</delete>
+	<delete id="deleteByMap" parameterType="java.util.HashMap">
+		delete from user where 1=1 and sex = #{sex} and username = #{username}
+		and address=#{address}
+		<if test="ids != null">
+			and id in
+			<foreach collection="ids" item="item" index="index" open="("
+				close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+
+	<select id="selectByMapInMap" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from user where 1=1 and
+		<if test="ids != null">
+			id in
+			<foreach collection="ids" item="item" index="index" open="("
+				close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		两种去map中值的方式， 1 .<if test="names != null"> and username in <foreach 
+			collection="names.keys" item="key" open="(" close=")" separator=","> #{names[${key}]} 
+			</foreach> 该方式为先获取map中的全部key，然后通过类似map.get(key) 的方式获取value值 ， 重点是 collection="names.keys" 
+			item="key" ， 取值方式#{names[${key}]} </if> 2.<if test="names != null"> and username 
+			in <foreach collection="names.values" item="value" open="(" close=")" separator=","> 
+			#{value} </foreach> </if> 该种方式通过先获取map中全部的value值，然后循环获取每个value的值 ， 重点是collection="names.values" 
+			item="value" 取值方式#{value}
+		方式一 ：先获取全部的key，然后通过key得value
+		<if test="names != null">
+			and username in
+			<foreach collection="names.keys" item="key" open="(" close=")"
+				separator=",">
+				#{names[${key}]}
+			</foreach>
+		</if>
+		方式二 ：先获取全部的value值，然后循环获取每个value值
+		<if test="names != null">
+			and username in
+			<foreach collection="names.values" item="value" open="("
+				close=")" separator=",">
+				#{value}
+			</foreach>
+		</if>
+		方式三：循环，通过key获取对应的value值
+		and username in
+		<foreach collection="names.keys" item="key" open="(" close=")"
+			separator=",">
+			<if test="names[key] != null">
+				#{names[${key}]}
+			</if>
+		</foreach>
+		<if test="address != null">
+			and address = #{address}
+		</if>
+	</select>
+	
+	<select id="selectByQueryVo" parameterType="com.wx.mybatis.entity.QueryVo" resultType="com.wx.mybatis.entity.User">
+		select * from user where username like  "%"#{user.username}"%"
+	</select>
+	
+	 -->
+</mapper>
