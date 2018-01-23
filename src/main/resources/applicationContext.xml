@@ -70,7 +70,7 @@
 	<!-- mapper动态代理开发，增强版 包扫描方式 -->
 	<!-- 该扫描实现bean不需要有id,因为扫描的包内会生成大量的mapper接口实例，因此spring取值的时候应该 通过context.getBean(XXXMapper.class)的方式取 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<!-- 实例化的时候会自动找到上面生成的 sqlSessionFactory ，不需要显式的注入sqlSessionFactory -->
+		<!-- 实例化的时候会自动找到上面生成的 sqlSessionFactory ，不需要手动显式的注入sqlSessionFactory -->
 		<!-- <property name="sqlSessionFactory" ref="sqlSessionFactoryBean"/> -->
 		<!-- 扫描的基本包，会扫描基本包及其子包下的mapper接口 -->
 		<property name="basePackage" value="com.wx.mapper" />
