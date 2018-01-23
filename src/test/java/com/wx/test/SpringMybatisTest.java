@@ -1,5 +1,6 @@
 package com.wx.test;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -12,6 +13,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.wx.dao.UserDao;
 import com.wx.entity.User;
 import com.wx.mapper.UserMapper;
+import com.wx.service.UserService;
 
 public class SpringMybatisTest {
 	
@@ -58,5 +60,15 @@ public class SpringMybatisTest {
 			System.out.println("+++++++++++");
 		}
 	}
+	
+	/**
+	 * 测试事物配置
+	 */
+	@Test
+	public void insertUser() {
+		UserService service = (UserService) context.getBean(UserService.class);
+		service.insert();
+	}
+	
 	
 }

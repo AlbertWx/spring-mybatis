@@ -91,11 +91,12 @@
 		insert into user
 		(username ,address ,birthday ,sex ) values (#{username} ,#{address}
 		,#{birthday} ,#{sex})
+	</insert> -->
+	<insert id="insertUser" parameterType="com.wx.entity.User">
+		insert into user (username ,birthday ,sex ,address )
+		values (#{username} , #{birthday} ,#{sex} ,#{address} )
 	</insert>
-	<insert id="insertUser" parameterType="com.wx.mybatis.entity.User">
-		insert into user (username
-		,address ) values (#{username} ,#{address} )
-	</insert>
+	<!-- 
 	<insert id="insertByMap" parameterType="java.util.Map">
 		insert into user
 		<foreach collection="params.keys" item="key" open="(" close=")"
