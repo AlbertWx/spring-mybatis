@@ -12,6 +12,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.wx.dao.UserDao;
 import com.wx.entity.User;
+import com.wx.mapper.ExtUserMapper;
 import com.wx.mapper.UserMapper;
 import com.wx.service.UserService;
 
@@ -49,11 +50,42 @@ public class SpringMybatisTest {
 	
 	/**
 	 * mapper动态代理接口包扫描方式开发
+	 * 因为 ExtUserMapper继承UserMapper接口，所以spring在通过context.getBean(UserMapper.class)获取UserMapper
+	 * 时会找到两个，搞混，因此需要指定一下
 	 */
 	@Test
 	public void selectByIdByScanPackage() {
-		UserMapper mapper = (UserMapper) context.getBean(UserMapper.class);
-		List<User> list = mapper.selectById(36);
+		//UserMapper mapper = (UserMapper) context.getBean(UserMapper.class);
+		UserMapper mapper = (UserMapper) context.getBean("userMapper", UserMapper.class);
+		List<User> list = mapper.selectById(26);
+		for (User user : list) {
+			System.out.println("+++++++++++");
+			System.out.println(user.toString());
+			System.out.println("+++++++++++");
+		}
+	}
+	
+	/**
+	 * ExtUserMapper继承UserMapper接口开发
+	 */
+	@Test
+	public void selectByIdByScanPackageExtUserMapper1() {
+		ExtUserMapper mapper = (ExtUserMapper) context.getBean(ExtUserMapper.class);
+		List<User> list = mapper.selectById(26);
+		for (User user : list) {
+			System.out.println("+++++++++++");
+			System.out.println(user.toString());
+			System.out.println("+++++++++++");
+		}
+	}
+	
+	/**
+	 * ExtUserMapper继承UserMapper接口开发
+	 */
+	@Test
+	public void selectByIdByScanPackageExtUserMapper2() {
+		ExtUserMapper mapper = (ExtUserMapper) context.getBean(ExtUserMapper.class);
+		List<User> list = mapper.selectByIdExt(26);
 		for (User user : list) {
 			System.out.println("+++++++++++");
 			System.out.println(user.toString());
